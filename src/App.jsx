@@ -1,12 +1,18 @@
+import Footer from "./components/Footer"
+import Header from "./components/Header"
 import Shirt from "./components/Shirt"
-import ThreeDObjectViewer from "./components/Shirt"
 
 
 function App() {
   return (
     <>
-     <h1 className=" text-3xl text-red-600">react project</h1>
-     <Shirt modelUrl={'/shirt_baked.glb'}/>
+    <Header/>
+    <main>
+    <div className="flex justify-center items-center">
+      <Shirt modelUrl={'/shirt_baked.glb'}/>
+    </div>
+    </main>
+     <Footer/>
     </>
   )
 }
