@@ -1,10 +1,19 @@
 import { Decal, OrbitControls, useGLTF, useTexture } from '@react-three/drei';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 function Shirt({ modelUrl, texture, color }) {
   const { nodes, materials } = useGLTF(modelUrl);
+  const [scale,setScale]=useState(2.3);
   const shirt = useRef();
   const tex=useTexture(texture);
+  useEffect(() => {
+      if (window.innerWidth<700) {
+        setScale(1.5);
+      }else{
+        setScale(2.3);
+      }
+  }, [window.innerWidth])
+  
   return (
     <group>
       <mesh
@@ -13,7 +22,7 @@ function Shirt({ modelUrl, texture, color }) {
         material={materials.texture}
         material-roughness={1}
         dispose={null}
-        scale={2.3}
+        scale={scale}
         ref={shirt}
       >
         <meshStandardMaterial

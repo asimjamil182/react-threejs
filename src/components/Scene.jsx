@@ -24,6 +24,7 @@ function Scene({ color }) {
           {/* <Cup modelUrl={'cup.glb'} texture={'/threejs.png'} color={color} /> */}
         </Suspense>
       </CameraRig>
+      <OrbitControls enableZoom={false} minPolarAngle={Math.PI/2} maxPolarAngle={Math.PI/2}/>
     </Canvas>
 
   );
