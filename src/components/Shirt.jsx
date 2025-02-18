@@ -1,25 +1,27 @@
-import { OrbitControls, useGLTF, useTexture } from '@react-three/drei';
-import { Canvas } from '@react-three/fiber';
+import { Decal, OrbitControls, useGLTF, useTexture } from '@react-three/drei';
 import { useRef } from 'react';
-import { Group } from 'three';
 
 function Shirt({ modelUrl, texture, color }) {
   const { nodes, materials } = useGLTF(modelUrl);
-  const tex = useTexture(texture);
-  const shirtRef=useRef();
+  const shirt = useRef();
+  const tex=useTexture(texture);
   return (
-      <mesh scale={6} geometry={nodes.t_shirt.geometry} >
+    <group>
+      <mesh
+        castShadow
+        geometry={nodes.t_shirt.geometry}
+        material={materials.texture}
+        material-roughness={1}
+        dispose={null}
+        scale={2.3}
+        ref={shirt}
+      >
         <meshStandardMaterial
-          map={tex}
           color={color}
         />
-        <OrbitControls 
-        enablePan={false} 
-        enableZoom={false} 
-        enableRotate={true}
-        target={shirtRef.current ? shirtRef.current.position : [0, 0, 0]}
-        />
+        <Decal position={[0, 0.12, 0.15]} rotation={[0, 0, 0]} scale={0.15} map={tex} />
       </mesh>
+    </group>
   );
 }
 
