@@ -7,7 +7,7 @@ import Backdrop from './Backdrop';
 import Cup from './cup';
 
 
-function Scene({ color }) {
+function Scene({ color,logo,texture }) {
   return (
     <Canvas
       camera={{ position: [0, 0, 10], fov: 10 }}
@@ -20,7 +20,7 @@ function Scene({ color }) {
       <CameraRig>
         <Backdrop />
         <Suspense fallback={null}>
-          <Shirt modelUrl={'t_shirt.glb'} texture={'/react.png'} color={color} />
+          <Shirt modelUrl={'t_shirt.glb'} logo={logo} color={color} texture={texture} />
           {/* <Cup modelUrl={'cup.glb'} texture={'/threejs.png'} color={color} /> */}
         </Suspense>
       </CameraRig>

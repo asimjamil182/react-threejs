@@ -50,3 +50,18 @@ export const colors = [
   { name: "Dark Cyan", code: "#008b8b" },,
   { name: "Dark Goldenrod", code: "#b8860b" }
 ];
+
+export const editertab=[
+  {name:'Color',icon:''},
+  {name:'Texture',icon:''},
+  {name:'Logo',icon:''}
+]
+
+export const textures=[
+  {name:'react',textureUrl:'/react.png'},
+  {name:'threejs',textureUrl:'/threejs.png'},
+]
+export const logos=[
+  {name:'react',logoUrl:'/react.png'},
+  {name:'threejs',logoUrl:'/threejs.png'},
+]

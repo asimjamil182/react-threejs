@@ -10,20 +10,18 @@ import Customizer from "./components/Customizer";
 function App() {
 
   const [color,setColor] = useState('#ffffff');
+  const [logo,setLogo] = useState('/react.png');
+  const [texture,setTexture] = useState('/react.png');
 
-  const activeColor = (color) => {
-    setColor(color);
-  }
+
   return (
     <>
-      <div className="flex flex-col w-full h-full">
         <Header />
+        
         <main className="w-full h-[calc(100vh)] bg-gray-300">
-        <Scene color={color} />
+        <Scene color={color} logo={logo} texture={texture}  />
         </main>
-        {/* <Footer activeColor={ActiveColor} /> */}
-        <Customizer activeColor={activeColor}/>
-      </div>
+        <Customizer activeTexture={(texture)=>setTexture(texture)} activeColor={(color)=>setColor(color)} activeLogo={(logo)=>setLogo(logo)} />
     </>
   )
 }

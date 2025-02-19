@@ -1,7 +1,8 @@
 const Header = () => {
   return (
-    <header className=" absolute bg-gray-800 text-white text-center h-[4rem] flex items-center justify-center">
-      <h1>My Header</h1>
+    <header className="absolute w-full text-white text-center flex items-center justify-between px-8 py-4">
+      <div className="logo">Logo</div>
+      <div className="cart">Cart</div>
     </header>
   );
 };
