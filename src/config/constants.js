@@ -62,6 +62,6 @@ export const textures=[
   {name:'threejs',textureUrl:'/threejs.png'},
 ]
 export const logos=[
-  {name:'react',logoUrl:'/react.png'},
   {name:'threejs',logoUrl:'/threejs.png'},
+  {name:'react',logoUrl:'/react.png'},
 ]

@@ -1,12 +1,14 @@
 import { Decal, useGLTF, useTexture } from '@react-three/drei';
+import { useLoader } from '@react-three/fiber';
 import { useEffect, useRef, useState } from 'react';
+import { TextureLoader } from 'three';
 
 function Shirt({ modelUrl, logo, color, texture }) {
   const { nodes, materials } = useGLTF(modelUrl);
   const [scale, setScale] = useState(2.3);
-  const shirt = useRef();
-  const log = useTexture(logo);
-  // const tex = useTexture(texture);
+
+  const [log, tex] = useTexture([logo, texture]);
+
   useEffect(() => {
     if (window.innerWidth < 700) {
       setScale(1.5);
@@ -24,12 +26,12 @@ function Shirt({ modelUrl, logo, color, texture }) {
         material-roughness={1}
         dispose={null}
         scale={scale}
-        ref={shirt}
       >
         <meshStandardMaterial
           color={color}
+          map={tex}
         />
-        <Decal position={[0, 0.12, 0.15]} rotation={[0, 0, 0]} scale={0.15} map={log} />
+        <Decal position={[0, 0.12, 0.15]} rotation={[0, 0, 0]} scale={0.15} map={log}  />
       </mesh>
     </group>
   );

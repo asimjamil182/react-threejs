@@ -1,21 +1,31 @@
 import React, { useEffect, useState } from 'react'
-import { colors, editertab, logos, textures } from '../config/constants'
+import { colors,  logos, textures } from '../config/constants'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
+import { Highlights, Image, Palette, PlusCircle } from 'react-bootstrap-icons'
+const editertab=[
+    {name:'Color',icon:<Palette size={25}/>},
+    {name:'Texture',icon:<Highlights size={25}/>},
+    {name:'Logo',icon:<Image size={25}/>}
+  ]
 
 const Customizer = ({ activeColor, activeTexture, activeLogo }) => {
     const [currentTab, setCurrentTab] = useState('Color');
     const [currentColor, setCurrentColor] = useState('#ffffff');
-    const [currentTexture, setCurrentTexture] = useState('');
-    const [currentLogo, setCurrentLogo] = useState('/react.png');
+    const [currentTexture, setCurrentTexture] = useState(textures[0].textureUrl);
+    const [currentLogo, setCurrentLogo] = useState(logos[0].logoUrl);
+
+    const [currentCustomLogo,setCurrentCustomLogo]=useState('');
+    const [currentCustomTexture,setCurrentCustomTexture]=useState('');
+
 
 
     gsap.registerPlugin(useGSAP);
 
     useGSAP(() => {
-        document.querySelector('#color').style.bottom = 0;
-        document.querySelector('#color').style.opacity = 0.5;
-        gsap.to('#color', { bottom: 12, opacity: 1, duration: 1 })
+        // document.querySelector('#color').style.transform = 'translateY(10px)';
+        // document.querySelector('#color').style.opacity = 0.5;
+        // gsap.to('#color', { translateY: 0, opacity: 1, duration: 1 })
     }, [currentTab]);
 
     useEffect(() => {
@@ -34,17 +44,14 @@ const Customizer = ({ activeColor, activeTexture, activeLogo }) => {
         content = <Color defaultColor={currentColor} activeColor={(color)=>setCurrentColor(color)} />
     }
 
-    useEffect(() => {
-
-    }, [currentTab])
     return (
         <div>
-            <EditerTab activeTab={(tab) => setCurrentTab(tab)} />
-            <div id='color' className=" absolute left-0 right-0 bottom-0 p-4 opacity-50">
-                <div className='flex items-center justify-center w-full'>
-                    {/* {currentTab === 'Color' ? <Color activeColor={(color) => setCurrentColor(color)} /> : <Logo activeLogo={(logo) => setCurrentLogo(logo)} />} */}
+            
+            <div className="h-[6rem] bg-gray-300 overflow-hidden relative border flex flex-col justify-end items-center">
+                <div id='color' className='flex items-center justify-center'>
                     {content}
                 </div>
+                <EditerTab activeTab={(tab) => setCurrentTab(tab)} />
             </div>
         </div>
 
@@ -59,14 +66,16 @@ function EditerTab({ activeTab }) {
         activeTab(selectedTag);
     }, [selectedTag]);
     return (
-        <div className='absolute left-0 top-0 h-screen flex flex-col justify-center p-4 gap-2'>
+        <div className='flex justify-center'>
+            <div className='flex justify-center'>
             {editertab.map((tab, index) => (
                 <button
-                    className={`border p-2 ${selectedTag === tab.name ? `bg-white` : ``}`}
+                    className={`p-2 flex gap-2 transition-all duration-300 ${selectedTag === tab.name ? `bg-white` : `bg-gray-200`}`}
                     key={index}
                     onClick={() => setSelectedTag(tab.name)}
-                >{tab.name}</button>
+                >{tab.icon} <span className='hidden md:block'>{tab.name}</span></button>
             ))}
+        </div>
         </div>
     );
 }
@@ -78,7 +87,7 @@ function Color({defaultColor=colors[0].code, activeColor }) {
     }, [selectedColor])
 
     return (
-        <div className='flex shadow-md gap-2 items-center justify-center bg-[#ffffff8f] p-2 rounded-full'>
+        <div className='flex gap-2 items-center justify-center bg-white p-2'>
             {colors.map((color, index) => (
                 <button
                     key={index}
@@ -94,11 +103,19 @@ function Color({defaultColor=colors[0].code, activeColor }) {
 
 function Texture({defaultTexture=textures[0].textureUrl, activeTexture }) {
     const [selectedTexture, setSelectedTexture] = useState(defaultTexture);
+    const [customTexture,setCustomTexture]=useState(defaultTexture==textures[0].textureUrl?'':defaultTexture);
     useEffect(() => {
         activeTexture(selectedTexture);
     }, [selectedTexture])
+
+    const customLogoHandler=(e)=>{
+        const url=(URL.createObjectURL(e.target.files[0]));
+        console.log(url);
+        setCustomTexture(url);
+        setSelectedTexture(url);
+    }
     return (
-        <div className='flex shadow-md gap-2 items-center justify-center bg-[#ffffff8f] p-2 rounded-full'>
+        <div className='flex gap-2 items-center justify-center bg-white p-2'>
             {textures.map((texture, index) => (
                 <img
                     key={index}
@@ -108,17 +125,33 @@ function Texture({defaultTexture=textures[0].textureUrl, activeTexture }) {
                     title={texture.name}
                 />
             ))}
+            {customTexture && <img
+                src={customTexture}
+                onClick={() => setCustomTexture(customTexture)}
+                className={`w-6 h-6 rounded-full shadow ${selectedTexture === customTexture ? `border-2 border-black` : ``}`}
+                title={`Custom Logo`}
+            />}
+            
+            <PlusCircle size={24} onClick={()=>{document.querySelector('#customTextureSelector').click()}}/>
+            <input type="file" accept='image/' onChange={customLogoHandler} className='hidden' name="customlogo" id="customTextureSelector" />
         </div>
 
     );
 }
 function Logo({ defaultLogo=logos[0].logoUrl,activeLogo }) {
     const [selectedLogo, setSelectedLogo] = useState(defaultLogo);
+    const [customLogo,setCustomLogos]=useState(defaultLogo==logos[0].logoUrl?'':defaultLogo);
     useEffect(() => {
         activeLogo(selectedLogo);
     }, [selectedLogo])
+
+    const customLogoHandler=(e)=>{
+        const url=(URL.createObjectURL(e.target.files[0]));
+        setCustomLogos(url);
+        setSelectedLogo(url);
+    }
     return (
-        <div className='flex shadow-md gap-2 items-center justify-center bg-[#ffffff8f] p-2 rounded-full'>
+        <div className='flex gap-2 items-center justify-center bg-white p-2'>
             {logos.map((logo, index) => (
                 <img
                     key={index}
@@ -128,6 +161,15 @@ function Logo({ defaultLogo=logos[0].logoUrl,activeLogo }) {
                     title={logo.name}
                 />
             ))}
+            {customLogo && <img
+                src={customLogo}
+                onClick={() => setSelectedLogo(customLogo)}
+                className={`w-6 h-6 rounded-full shadow ${selectedLogo === customLogo ? `border-2 border-black` : ``}`}
+                title={`Custom Logo`}
+            />}
+            
+            <PlusCircle size={24} onClick={()=>{document.querySelector('#customlogoSelector').click()}}/>
+            <input type="file" accept='image/' onChange={customLogoHandler} className='hidden' name="customlogo" id="customlogoSelector" />
         </div>
 
     );

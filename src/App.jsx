@@ -17,8 +17,7 @@ function App() {
   return (
     <>
         <Header />
-        
-        <main className="w-full h-[calc(100vh)] bg-gray-300">
+        <main className="w-full h-[calc(100vh-6rem)] bg-gray-300">
         <Scene color={color} logo={logo} texture={texture}  />
         </main>
         <Customizer activeTexture={(texture)=>setTexture(texture)} activeColor={(color)=>setColor(color)} activeLogo={(logo)=>setLogo(logo)} />
