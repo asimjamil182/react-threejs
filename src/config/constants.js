@@ -58,8 +58,11 @@ export const editertab=[
 ]
 
 export const textures=[
-  {name:'react',textureUrl:'/react.png'},
-  {name:'threejs',textureUrl:'/threejs.png'},
+  {name:'textur 1',textureUrl:'/texture1.jpeg'},
+  {name:'textur 2',textureUrl:'/texture2.jpg'},
+  {name:'textur 3',textureUrl:'/texture3.jpg'},
+  {name:'textur 4',textureUrl:'/texture4.jpg'},
+  {name:'textur 5',textureUrl:'/texture5.jpg'},
 ]
 export const logos=[
   {name:'threejs',logoUrl:'/threejs.png'},
