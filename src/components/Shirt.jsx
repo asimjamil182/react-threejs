@@ -1,15 +1,31 @@
+import { useGSAP } from '@gsap/react';
 import { Decal, Outlines, Text, useGLTF, useTexture } from '@react-three/drei';
-import { useLoader } from '@react-three/fiber';
 import { useEffect, useRef, useState } from 'react';
 import { CanvasTexture, TextureLoader } from 'three';
+import gsap from 'gsap';
 
-function Shirt({ modelUrl, logo, color, texture }) {
+
+function Shirt({ modelUrl, logo, color, texture, direction }) {
+
   const { nodes, materials } = useGLTF(modelUrl);
   const [scale, setScale] = useState(2.3);
+  const [rotation, setRotation] = useState(0);
+
 
   const textTexture=createTextTexture('Hello World');
-
   const [log, tex] = useTexture([logo, texture]);
+
+  useEffect(() => {
+    if (direction === 'Front') {
+      setRotation(0);
+    } else if (direction === 'Left') {
+      setRotation(Math.PI / 2);
+    } else if (direction === 'Back') {
+      setRotation(Math.PI);
+    } else if (direction === 'Right') {
+      setRotation(-Math.PI / 2);
+    }
+  }, [direction]);
 
   useEffect(() => {
     if (window.innerWidth < 700) {
@@ -28,14 +44,14 @@ function Shirt({ modelUrl, logo, color, texture }) {
         material-roughness={1}
         dispose={null}
         scale={scale}
+        rotation={[0, rotation, 0]}
       >
         <meshStandardMaterial
           color={color}
           map={tex}
         />
-        {/* <Outlines thickness={0.002} color={`blue`} /> */}
-        <Decal position={[0, 0.12, 0.15]} rotation={[0, 0, 0]} scale={0.15}>
-          <meshStandardMaterial transparent map={log}/>     
+        <Decal onClick={(e)=>console.log(e)} position={[0, 0.12, 0.15]} rotation={[0, 0, 0]} scale={0.15}>
+          <meshStandardMaterial transparent map={log}/>    
         </Decal>
       </mesh>
     </group>
