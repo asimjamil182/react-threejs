@@ -18,7 +18,7 @@ const CustomizerPage=()=> {
     <>
       {/* <Header /> */}
         <Header/>
-      <main className="w-full h-[calc(100vh-6rem)] bg-gray-300 flex justify-between">
+      <main className="w-full h-[calc(100vh-6rem)] bg-gray-300 flex justify-between flex-wrap md:flex-nowrap">
         <div className="w-1/5 h-full overflow-auto bg-white">
           <Customizer activeTexture={(texture) => setTexture(texture)} activeColor={(color) => setColor(color)} activeLogo={(logo) => setLogo(logo)} />
         </div>
