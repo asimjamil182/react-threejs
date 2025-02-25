@@ -1,7 +1,7 @@
 import React, { useState,useEffect } from 'react'
 
 const DirectionView = ({activeDirection}) => {
-    const [direction, setDirection] = useState('front');
+    const [direction, setDirection] = useState('Front');
 
     useEffect(() => {
         activeDirection(direction);

@@ -1,14 +1,11 @@
-import React, { Suspense, useRef } from 'react';
+import React, { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { Environment, OrbitControls, Plane } from '@react-three/drei';
+import { Environment, OrbitControls } from '@react-three/drei';
 import Shirt from './Shirt';
 import CameraRig from './CameraRig';
-import Backdrop from './Backdrop';
-import Cup from './cup';
 
 
-function Scene({ color, logo, texture, direction }) {
-  console.log(color, logo, texture, direction);
+function Scene({ color, image, direction }) {
   return (
     <Canvas
       camera={{ position: [0, 0, 10], fov: 10 }}
@@ -21,7 +18,7 @@ function Scene({ color, logo, texture, direction }) {
       <CameraRig>
         {/* <Backdrop /> */}
         <Suspense fallback={null}>
-          <Shirt modelUrl={'t_shirt.glb'} logo={logo} color={color} texture={texture} direction={direction} />
+          <Shirt modelUrl={'t_shirt.glb'} image={image} color={color} direction={direction} />
           {/* <Cup modelUrl={'cup.glb'} texture={'/threejs.png'} color={color} /> */}
         </Suspense>
       </CameraRig>

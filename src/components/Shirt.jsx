@@ -5,7 +5,7 @@ import { CanvasTexture, TextureLoader } from 'three';
 import gsap from 'gsap';
 
 
-function Shirt({ modelUrl, logo, color, texture, direction }) {
+function Shirt({ modelUrl, image, color, direction }) {
 
   const { nodes, materials } = useGLTF(modelUrl);
   const [scale, setScale] = useState(2.3);
@@ -13,7 +13,7 @@ function Shirt({ modelUrl, logo, color, texture, direction }) {
 
 
   const textTexture=createTextTexture('Hello World');
-  const [log, tex] = useTexture([logo, texture]);
+  const [log] = useTexture([image]);
 
   useEffect(() => {
     if (direction === 'Front') {
@@ -48,7 +48,6 @@ function Shirt({ modelUrl, logo, color, texture, direction }) {
       >
         <meshStandardMaterial
           color={color}
-          map={tex}
         />
         <Decal onClick={(e)=>console.log(e)} position={[0, 0.12, 0.15]} rotation={[0, 0, 0]} scale={0.15}>
           <meshStandardMaterial transparent map={log}/>    

@@ -57,14 +57,28 @@ export const editertab=[
   {name:'Logo',icon:''}
 ]
 
-export const textures=[
-  {name:'textur 1',textureUrl:'/texture1.jpeg'},
-  {name:'textur 2',textureUrl:'/texture2.jpg'},
-  {name:'textur 3',textureUrl:'/texture3.jpg'},
-  {name:'textur 4',textureUrl:'/texture4.jpg'},
-  {name:'textur 5',textureUrl:'/texture5.jpg'},
+export const defalutImages=[
+  {name:'textur 1',imageUrl:'/texture1.jpeg'},
+  {name:'textur 2',imageUrl:'/texture2.jpg'},
+  {name:'textur 3',imageUrl:'/texture3.jpg'},
+  {name:'textur 4',imageUrl:'/texture4.jpg'},
+  {name:'textur 5',imageUrl:'/texture5.jpg'},
 ]
-export const logos=[
-  {name:'threejs',logoUrl:'/threejs.png'},
-  {name:'react',logoUrl:'/react.png'},
+
+export const defalutFonts=[
+  {name:'Arial',fontUrl:'/threejs.png'},
+  {name:'Roboto',fontUrl:'/react.png'},
+]
+
+
+export const shirtSides=[
+  {name:'Front Side'},
+  {name:'Back Side'},
+  {name:'Left Side'},
+  {name:'Right Side'},
+]
+
+export const shirtLayers=[
+  {type:'Image',price:'16 AED',icon:'/react.png'},
+  {type:'Text',price:'12 AED',icon:'/react.png'},
 ]
