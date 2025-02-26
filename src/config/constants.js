@@ -80,5 +80,5 @@ export const shirtSides=[
 
 export const shirtLayers=[
   {type:'Image',price:'16 AED',icon:'/react.png'},
-  {type:'Text',price:'12 AED',icon:'/react.png'},
+  {type:'Text',price:'10 AED',icon:'/react.png'},
 ]

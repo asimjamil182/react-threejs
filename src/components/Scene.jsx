@@ -5,7 +5,7 @@ import Shirt from './Shirt';
 import CameraRig from './CameraRig';
 
 
-function Scene({ color, image, direction }) {
+function Scene({ color, decals, direction }) {
   return (
     <Canvas
       camera={{ position: [0, 0, 10], fov: 10 }}
@@ -18,7 +18,7 @@ function Scene({ color, image, direction }) {
       <CameraRig>
         {/* <Backdrop /> */}
         <Suspense fallback={null}>
-          <Shirt modelUrl={'t_shirt.glb'} image={image} color={color} direction={direction} />
+          <Shirt modelUrl={'t_shirt.glb'} decals={decals} color={color} direction={direction} />
           {/* <Cup modelUrl={'cup.glb'} texture={'/threejs.png'} color={color} /> */}
         </Suspense>
       </CameraRig>

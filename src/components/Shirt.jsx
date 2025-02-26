@@ -3,18 +3,21 @@ import { Decal, Outlines, Text, useGLTF, useTexture } from '@react-three/drei';
 import { useEffect, useRef, useState } from 'react';
 import { CanvasTexture, TextureLoader } from 'three';
 import gsap from 'gsap';
+import { use } from 'react';
 
 
-function Shirt({ modelUrl, image, color, direction }) {
+function Shirt({ modelUrl, decals, color, direction }) {
 
   const { nodes, materials } = useGLTF(modelUrl);
   const [scale, setScale] = useState(2.3);
   const [rotation, setRotation] = useState(0);
+  const [decalImages, setDecalImages] = useState([]);
 
+  useEffect(() => {
+    setDecalImages(decals);
+  }, [decals]);
 
-  const textTexture=createTextTexture('Hello World');
-  const [log] = useTexture([image]);
-
+  // const textTexture=createTextTexture('Hello World');
   useEffect(() => {
     if (direction === 'Front') {
       setRotation(0);
@@ -49,9 +52,18 @@ function Shirt({ modelUrl, image, color, direction }) {
         <meshStandardMaterial
           color={color}
         />
-        <Decal onClick={(e)=>console.log(e)} position={[0, 0.12, 0.15]} rotation={[0, 0, 0]} scale={0.15}>
-          <meshStandardMaterial transparent map={log}/>    
-        </Decal>
+        {decalImages.map((decal, index) => (
+          <Decal
+            key={index}
+            position={decal.position}
+            scale={decal.scale}
+            rotation={decal.rotation}
+            material={materials.texture}
+          >
+            <meshStandardMaterial transparent map={decal.type=='Image'?new TextureLoader().load(decal.url):decal.texture} polygonOffset polygonOffsetFactor={-1}/>
+          </Decal>
+        ))}
+        
       </mesh>
     </group>
   );
@@ -59,17 +71,3 @@ function Shirt({ modelUrl, image, color, direction }) {
 
 export default Shirt;
 
-function createTextTexture(text='Hello World',fontSize='100px',fontColor='black',background='transparent') {
-  const canvas = document.createElement('canvas');
-  const context = canvas.getContext('2d');
-  canvas.width = 512;
-  canvas.height = 256;
-  context.fillStyle = background;
-  context.fillRect(0, 0, canvas.width, canvas.height);
-  context.fillStyle = fontColor;
-  context.font = `${fontSize} Arial`;
-  context.textAlign = 'center'
-  context.fillText(text, canvas.width / 2, canvas.height / 2);
-  context.stroke=1;
-  return new CanvasTexture(canvas);
-}

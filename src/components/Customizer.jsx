@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { colors, defalutImages, defalutFonts } from '../config/constants'
-import gsap from 'gsap'
-import { useGSAP } from '@gsap/react'
-import { Fonts, Highlights, Image, ImageFill, LayersFill, Palette, PlusCircle, PlusSquare } from 'react-bootstrap-icons'
+import { Fonts, ImageFill, LayersFill, Palette } from 'react-bootstrap-icons'
 import ImageUploadBox from './ImageUploadBox'
 import Layer from './Layer'
+import { CanvasTexture } from 'three'
+
 const editertab = [
     { name: 'Color', icon: <Palette size={25} /> },
     { name: 'Image', icon: <ImageFill size={25} /> },
@@ -12,38 +12,71 @@ const editertab = [
     { name: 'Layers', icon: <LayersFill size={25} /> },
 ]
 
-const Customizer = ({ activeColor, activeImage }) => {
-    const [currentTab, setCurrentTab] = useState('Color');
+const Customizer = ({ direction = 'Front', activeColor, activeDecals,selectedLayer }) => {
+    const [currentTab, setCurrentTab] = useState('Image');
     const [currentColor, setCurrentColor] = useState('#ffffff');
-    const [currentImage, setCurrentImage] = useState(defalutImages[0].imageUrl);
-    const [currentText, setCurrentText] = useState('Text');
+    const [currentDecals, setCurrentDecals] = useState([]);
+    const [currentText, setCurrentText] = useState('');
+    const [directionView, setDirectionView] = useState(direction);
+    const [activeLayer, setActiveLayer] = useState('');
 
-    const [currentCustomLogo, setCurrentCustomLogo] = useState('');
-    const [currentCustomTexture, setCurrentCustomTexture] = useState('');
+    useEffect(() => {
+        if (activeLayer.id !== 0) {
+            selectedLayer(activeLayer);
+        }
+    }, [activeLayer]);
 
+    function ActiveColor(color) {
+        console.log('color', color);
+    }
+    const getRandomNumber = () => {
+        return (Math.random() * 0.3 - 0.15).toFixed(2);
+    };
+    function ActiveDecals(decal) {
+        if (decal === '') {
+            return;
+        }
+        setCurrentDecals([...currentDecals, {
+            type: 'Image',
+            layerType: <ImageLayer key={currentDecals.length + 1} image={decal} />,
+            id: currentDecals.length + 1,
+            position: [0, 0, 0.15],
+            scale: [0.2, 0.2, 0.2],
+            rotation: [0, 0, 0],
+            url: decal,
+            texture: null
+        }]);
+    }
+    function ActiveText(text) {
+        if (text === '') {
+            return;
+        }
+        setCurrentDecals([...currentDecals, {
+            type: 'Text',
+            layerType: <TextLayer key={currentDecals.length + 1} />,
+            id: currentDecals.length + 1,
+            position: [0, 0, 0.15],
+            scale: [0.2, 0.2, 0.2],
+            rotation: [0, 0, 0],
+            url: null,
+            texture: text
+        }]);
+    }
 
-    gsap.registerPlugin(useGSAP);
-
-    useGSAP(() => {
-        // document.querySelector('#color').style.transform = 'translateY(10px)';
-        // document.querySelector('#color').style.opacity = 0.5;
-        // gsap.to('#color', { translateY: 0, opacity: 1, duration: 1 })
-    }, [currentTab]);
 
     useEffect(() => {
         activeColor(currentColor);
-        activeImage(currentImage);
-
-    }, [currentColor, currentText, currentImage]);
+        activeDecals(currentDecals);
+    }, [currentColor, currentText, currentDecals]);
 
     let content;
 
     if (currentTab == 'Text') {
-        content = <TextAttibutes activeText={(text) => setCurrentText(text)} />
+        content = <TextAttibutes activeText={ActiveText} />
     } else if (currentTab == 'Image') {
-        content = <ImageAttribute defaultImage={currentImage} activeImage={(image) => setCurrentImage(image)} />
+        content = <ImageAttribute activeDecals={ActiveDecals} />
     } else if (currentTab == 'Layers') {
-        content = <Layer />
+        content = <Layer layers={currentDecals} selectedLayer={(layer)=>setActiveLayer(layer)} />
     } else {
         content = <Color defaultColor={currentColor} activeColor={(color) => setCurrentColor(color)} />
     }
@@ -65,7 +98,7 @@ const Customizer = ({ activeColor, activeImage }) => {
 export default Customizer
 
 function EditerTab({ activeTab }) {
-    const [selectedTag, setSelectedTag] = useState('Color');
+    const [selectedTag, setSelectedTag] = useState('Image');
     useEffect(() => {
         activeTab(selectedTag);
     }, [selectedTag]);
@@ -108,42 +141,46 @@ function Color({ defaultColor = colors[0].code, activeColor }) {
     );
 }
 
-function ImageAttribute({ defaultImage = defalutImages[0].imageUrl, activeImage }) {
-    const [selectedImage, setSelectedImage] = useState(defaultImage);
-    const [customImage, setCustomImage] = useState(defaultImage == defalutImages[0].imageUrl ? '' : defaultImage);
-    useEffect(() => {
-        activeImage(selectedImage);
-    }, [selectedImage])
+function ImageAttribute({ activeDecals }) {
+
+    const [customImage, setCustomImage] = useState([]);
+
+    const handleClick = (e) => {
+        activeDecals(e);
+    }
 
     const customImageHandler = (e) => {
         const url = (URL.createObjectURL(e.target.files[0]));
-        setCustomImage(url);
-        setSelectedImage(url);
+        setCustomImage([...customImage, {
+            name: e.target.files[0].name,
+            url: url
+        }]);
     }
 
     return (
         <>
             <div className='font-semibold py-2'>Image</div>
-
             <div className='flex gap-2 flex-wrap'>
-
                 <ImageUploadBox onImageUpload={customImageHandler} />
-                {customImage && <img
-                    src={customImage}
-                    onClick={() => setSelectedImage(customImage)}
-                    className={`w-16 h-16 shadow cursor-pointer ${selectedImage === customImage ? `border-2 border-black` : ``}`}
-                    title={`Custom Logo`}
-                />}
+                {customImage.map((image, index) => (
+                    <img
+                        key={index}
+                        src={image.url}
+                        onClick={() => handleClick(image.url)}
+                        className={`w-16 h-16 shadow cursor-pointer`}
+                        title={image.name}
+                    />
+                ))}
             </div>
             <div className=' py-2 text-sm font-semibold border-b border-gray-400'>Default Images</div>
             <div className='flex gap-2 flex-wrap mt-2'>
-                {defalutImages.map((texture, index) => (
+                {defalutImages.map((image, index) => (
                     <img
                         key={index}
-                        src={texture.imageUrl}
-                        onClick={() => setSelectedImage(texture.imageUrl)}
-                        className={`w-16 h-16 shadow cursor-pointer ${selectedImage === texture.imageUrl ? `border-2 border-black` : ``}`}
-                        title={texture.name}
+                        src={image.imageUrl}
+                        onClick={() => handleClick(image.imageUrl)}
+                        className={`w-16 h-16 shadow cursor-pointer`}
+                        title={image.name}
                     />
                 ))}
             </div>
@@ -151,22 +188,59 @@ function ImageAttribute({ defaultImage = defalutImages[0].imageUrl, activeImage 
 
     );
 }
-function TextAttibutes({ defaultText = defalutFonts[0].name, activeText }) {
-    const [selectedText, setSelectedText] = useState(defaultText);
-    useEffect(() => {
-        activeText(selectedText);
-    }, [selectedText])
+function TextAttibutes({ activeText }) {
+    
+    function handleClick(e) {
+        activeText(createTextTexture(e, '100px', 'black', 'transparent'));
+    }
 
     return (
         <>
             <div className='font-semibold py-2 border-b border-gray-300'>Text</div>
             <div className='flex gap-2 flex-wrap py-2'>
                 {defalutFonts.map((font, index) => (
-                    <div key={index} onClick={() => setSelectedText(font.name)} className={`font-semibold  bg-white p-3 border-2 cursor-pointer ${selectedText == font.name ? `border-black` : ''}`}>{font.name}</div>
+                    <div key={index} onClick={()=>handleClick(font.name)} className={`font-semibold  bg-white p-3 border-2 cursor-pointer`}>{font.name}</div>
                 ))}
-
             </div>
-
         </>
     );
+}
+
+function ImageLayer({ image = "/react.png", price = "00 AED" }) {
+    return (
+        <div className='p-2 m-0.5 border border-gray-300 rounded-md bg-gray-200 hover:shadow-md flex items-center justify-between cursor-pointer'>
+            <div className='flex items-center'>
+                <img src={image} className='w-6 h-6' />
+                <span className='pl-2'>Image</span>
+            </div>
+            <div className='font-semibold'>{price}</div>
+        </div>
+    )
+}
+function TextLayer({ text = "Text", price = "00 AED" }) {
+    return (
+        <div className='p-2 m-0.5 border border-gray-300 rounded-md bg-gray-200 hover:shadow-md flex items-center justify-between cursor-pointer'>
+            <div className='flex items-center'>
+                {/* <img src='/react.png' className='w-6 h-6' /> */}
+                <Fonts className='w-6 h-6' />
+                <span className='pl-2'>{text}</span>
+            </div>
+            <div className='font-semibold'>{price}</div>
+        </div>
+    )
+}
+
+function createTextTexture(text = 'Hello World', fontSize = '100px', fontColor = 'black', background = 'transparent') {
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    canvas.width = 512;
+    canvas.height = 256;
+    context.fillStyle = background;
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.fillStyle = fontColor;
+    context.font = `${fontSize} Arial`;
+    context.textAlign = 'center'
+    context.fillText(text, canvas.width / 2, canvas.height / 2);
+    context.stroke = 1;
+    return new CanvasTexture(canvas);
 }
