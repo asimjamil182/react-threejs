@@ -2,15 +2,16 @@ import React, { useEffect, useState } from 'react'
 import { ChevronBarDown, ChevronDown, ChevronUp, Fonts } from 'react-bootstrap-icons'
 import { shirtLayers, shirtSides } from '../config/constants'
 
-const Layer = ({ layers , selectedLayer}) => {
+const Layer = ({ layers , selectedLayer,activeLayer}) => {
 
     const [attributeLayers, setAttributeLayers] = useState(layers);
+    
 
     return (
         <div className=''>
             <div className='font-semibold border-b border-gray-300 py-2'>Layers</div>
             {attributeLayers.map((layer, index) => (
-                <div key={index} onClick={()=>selectedLayer({id:layer.id,type:layer.type})}>{layer.layerType}</div>
+                <div className={activeLayer==layer.id?`border border-gray-800 rounded-md`:``} key={index} onClick={()=>selectedLayer(layer.id)}>{layer.layerType}</div>
             ))}
         </div>
     )

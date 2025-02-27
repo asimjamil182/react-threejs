@@ -12,7 +12,7 @@ const editertab = [
     { name: 'Layers', icon: <LayersFill size={25} /> },
 ]
 
-const Customizer = ({ direction = 'Front', activeColor, activeDecals,selectedLayer }) => {
+const Customizer = ({ direction = 'Front', activeColor, activeDecals,selectedLayer, updateProperties }) => {
     const [currentTab, setCurrentTab] = useState('Image');
     const [currentColor, setCurrentColor] = useState('#ffffff');
     const [currentDecals, setCurrentDecals] = useState([]);
@@ -21,10 +21,44 @@ const Customizer = ({ direction = 'Front', activeColor, activeDecals,selectedLay
     const [activeLayer, setActiveLayer] = useState('');
 
     useEffect(() => {
-        if (activeLayer.id !== 0) {
-            selectedLayer(activeLayer);
+        if (activeLayer !='') {  
+            const layer = currentDecals.find((layer) => layer.id === activeLayer);
+            if (layer) {
+                selectedLayer({
+                    id: layer.id,
+                    type: layer.type,
+                    positionX: layer.position[0],
+                    positionY: layer.position[1],
+                    scale: layer.scale,
+                    rotation: layer.rotation[1],
+                    url: layer.url || null,
+                    text: layer.text || null,
+                    texture: layer.texture || null
+                });
+            }
         }
     }, [activeLayer]);
+
+    useEffect(() => {
+        const changedecals=currentDecals.map((layer) => {
+            if (layer.id===activeLayer) {
+                return {
+                    ...layer,
+                    position: [ updateProperties.positionX, updateProperties.positionY,0.15],
+                    scale: updateProperties.scale,
+                    rotation: [0, updateProperties.rotation, 0],
+                    text: updateProperties.text || null,
+                    texture: createTextTexture(updateProperties.text, '100px', 'black', 'transparent') || null
+                }
+            }else{
+                return layer;
+            }
+        });
+        setCurrentDecals(changedecals);
+    }, [updateProperties]);
+    
+
+
 
     function ActiveColor(color) {
         console.log('color', color);
@@ -41,11 +75,24 @@ const Customizer = ({ direction = 'Front', activeColor, activeDecals,selectedLay
             layerType: <ImageLayer key={currentDecals.length + 1} image={decal} />,
             id: currentDecals.length + 1,
             position: [0, 0, 0.15],
-            scale: [0.2, 0.2, 0.2],
+            scale: 0.2,
             rotation: [0, 0, 0],
             url: decal,
+            text: null,
             texture: null
         }]);
+        selectedLayer({
+            id: currentDecals.length + 1,
+            type: 'Image',
+            positionX: 0.15,
+            positionY: 0,
+            scale: 0.2,
+            rotation: 0,
+            url: decal || null,
+            text: null,
+            texture: null
+        });
+        setActiveLayer(currentDecals.length + 1);
     }
     function ActiveText(text) {
         if (text === '') {
@@ -56,11 +103,24 @@ const Customizer = ({ direction = 'Front', activeColor, activeDecals,selectedLay
             layerType: <TextLayer key={currentDecals.length + 1} />,
             id: currentDecals.length + 1,
             position: [0, 0, 0.15],
-            scale: [0.2, 0.2, 0.2],
+            scale: 0.2,
             rotation: [0, 0, 0],
             url: null,
-            texture: text
+            text: text,
+            texture: createTextTexture(text, '100px', 'black', 'transparent')
         }]);
+        selectedLayer({
+            id: currentDecals.length + 1,
+            type: 'Text',
+            positionX: 0.15,
+            positionY: 0,
+            scale: 0.2,
+            rotation: 0,
+            url: null,
+            text: text,
+            texture: createTextTexture(text, '100px', 'black', 'transparent')
+        });
+        setActiveLayer(currentDecals.length+1);
     }
 
 
@@ -76,7 +136,7 @@ const Customizer = ({ direction = 'Front', activeColor, activeDecals,selectedLay
     } else if (currentTab == 'Image') {
         content = <ImageAttribute activeDecals={ActiveDecals} />
     } else if (currentTab == 'Layers') {
-        content = <Layer layers={currentDecals} selectedLayer={(layer)=>setActiveLayer(layer)} />
+        content = <Layer layers={currentDecals} activeLayer={activeLayer} selectedLayer={(layer)=>setActiveLayer(layer)} />
     } else {
         content = <Color defaultColor={currentColor} activeColor={(color) => setCurrentColor(color)} />
     }
@@ -191,7 +251,7 @@ function ImageAttribute({ activeDecals }) {
 function TextAttibutes({ activeText }) {
     
     function handleClick(e) {
-        activeText(createTextTexture(e, '100px', 'black', 'transparent'));
+        activeText(e);
     }
 
     return (

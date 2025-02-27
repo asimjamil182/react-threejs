@@ -2,8 +2,6 @@ import { useGSAP } from '@gsap/react';
 import { Decal, Outlines, Text, useGLTF, useTexture } from '@react-three/drei';
 import { useEffect, useRef, useState } from 'react';
 import { CanvasTexture, TextureLoader } from 'three';
-import gsap from 'gsap';
-import { use } from 'react';
 
 
 function Shirt({ modelUrl, decals, color, direction }) {
@@ -16,8 +14,6 @@ function Shirt({ modelUrl, decals, color, direction }) {
   useEffect(() => {
     setDecalImages(decals);
   }, [decals]);
-
-  // const textTexture=createTextTexture('Hello World');
   useEffect(() => {
     if (direction === 'Front') {
       setRotation(0);
@@ -54,13 +50,16 @@ function Shirt({ modelUrl, decals, color, direction }) {
         />
         {decalImages.map((decal, index) => (
           <Decal
+            onClick={() => {
+              console.log('decal clicked', decal.id);
+            }}
             key={index}
             position={decal.position}
             scale={decal.scale}
             rotation={decal.rotation}
             material={materials.texture}
           >
-            <meshStandardMaterial transparent map={decal.type=='Image'?new TextureLoader().load(decal.url):decal.texture} polygonOffset polygonOffsetFactor={-1}/>
+            <meshStandardMaterial transparent map={decal.type=='Image'?new TextureLoader().load(decal.url):decal.texture} polygonOffset polygonOffsetFactor={-1*(index+1)}/>
           </Decal>
         ))}
         
